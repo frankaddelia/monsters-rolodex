@@ -1,5 +1,7 @@
 import { Component } from 'react';
 
+import CardList from './components/card-list/card-list.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 
 class App extends Component {
@@ -11,11 +13,11 @@ class App extends Component {
       searchField: ''
     };
 
-    console.log('constructor');
+    // console.log('constructor');
   }
   
   componentDidMount() {
-    console.log('component did mount');
+    // console.log('component did mount');
     fetch('https://jsonplaceholder.typicode.com/users')
       .then(response => response.json())
       .then(users => this.setState(
@@ -23,25 +25,12 @@ class App extends Component {
           return { monsters: users }
         },
         () => {
-          console.log(this.state);
+          // console.log(this.state);
         }
         ));
       }
       
-  render () {
-    console.log('render');
-
-    const filteredMonsters = this.state.monsters.filter(monster => 
-      monster.name.toLocaleLowerCase().includes(this.state.searchField)
-    );
-
-    return (
-      <div className="App">
-      <input
-        type="search"
-        className="search-box"
-        placeholder="Search monsters..."
-        onChange={(e) => {
+      onSearchChange = (e) => {
           const searchField = e.target.value.toLocaleLowerCase();
 
           this.setState(() => {
@@ -49,11 +38,26 @@ class App extends Component {
               searchField
             }
           });
-        }}
-      />
-        {filteredMonsters.map(monster => <div key={monster.id}>
-          <h1>{monster.name}</h1>
-        </div>)}
+        }
+
+  render () {
+    // console.log('render');
+
+    const { monsters, searchField } = this.state;
+    const { onSearchChange } = this;
+    const filteredMonsters = monsters.filter(monster => 
+      monster.name.toLocaleLowerCase().includes(searchField)
+    );
+
+    return (
+      <div className="App">
+        <h1 className="app-title">Monsters Rolodex</h1>
+        <SearchBox
+          className="monsters-search-box"
+          onChangeHandler={onSearchChange}
+          placeholder='Search monsters...'
+        />
+        <CardList monsters={filteredMonsters} />
       </div>
     );
   }
